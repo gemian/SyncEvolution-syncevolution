@@ -130,9 +130,14 @@ void SoupTransportAgent::send(const char *data, size_t len)
     // use CA certificates if available and needed,
     // otherwise let soup use system default certificates
     if (m_verifySSL) {
-        if (!m_cacerts.empty()) {
-            g_object_set(m_session.get(), SOUP_SESSION_SSL_CA_FILE, m_cacerts.c_str(), NULL);
-        }
+	    if (!m_cacerts.empty()) {
+		    g_object_set(m_session.get(), SOUP_SESSION_SSL_CA_FILE,
+				 m_cacerts.c_str(), NULL);
+	    }
+    } else {
+	    // Checking enabled by default, disable it.
+	    g_object_set(m_session.get(), SOUP_SESSION_SSL_STRICT, false,
+			 NULL);
     }
 
     soup_message_set_request(message.get(), m_contentType.c_str(),
